@@ -42,7 +42,7 @@ main{
 }
 
 .marcador{
-    background-color: rgb(158, 113, 0);
+    background-color: rgb(99, 90, 68);
     padding: 1rem 2rem;
     border-radius: 1rem;
     position: relative;
@@ -60,7 +60,7 @@ main{
     line-height: 1;
     padding: .5rem;
     border-radius: .5rem;
-    border: 2px solid rgb(158, 113, 0);
+    border: 2px solid rgb(99, 90, 68);
 }
 
 .marcador .nombre-jugador{
