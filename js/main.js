@@ -16,96 +16,11 @@ botonesArmas.forEach(boton => {
     boton.addEventListener("click", iniciarTurno);
 });
 
-function iniciarTurno(e) {
-    
-    let eleccionPC = Math.floor(Math.random() * 3);
-    let eleccionUsuario = e.currentTarget.id;
-
-    // piedra => 0
-    // papel => 1
-    // tijera => 2
-
-    if (eleccionPC === 0) {
-        eleccionPC = "piedra🪨";
-    } else if (eleccionPC === 1) {
-        eleccionPC = "papel📋"
-    } else if (eleccionPC === 2) {
-        eleccionPC = "tijera✂️"
-    }
-
-    // piedra vence a tijera
-    // tijera vence a papel
-    // papel vence a piedra
-    // si son iguales es empate
-
-    if (
-        (eleccionUsuario === "piedra🪨" && eleccionPC === "tijera✂️") ||
-        (eleccionUsuario === "tijera✂️" && eleccionPC === "papel📋") ||
-        (eleccionUsuario === "papel📋" && eleccionPC === "piedra🪨")
-    ) {
-        ganaUsuario();
-    } else if (
-        (eleccionPC === "piedra🪨" && eleccionUsuario === "tijera✂️") ||
-        (eleccionPC === "tijera✂️" && eleccionUsuario === "papel📋") ||
-        (eleccionPC === "papel📋" && eleccionUsuario === "piedra🪨")
-    ) {
-        ganaPC();
-    } else {
-        empate();
-    }
-
-    mensaje.classList.remove("disabled");
-    contenedorEleccionUsuario.innerText = eleccionUsuario;
-    contenedorEleccionPC.innerText = eleccionPC;
-
-    if (puntosUsuario === 5 || puntosPC === 5) {
-
-        if (puntosUsuario === 5) {
-            instrucciones.innerText = "🔥 ¡Ganaste el juego! 🔥"
-        }
-
-        if (puntosPC === 5) {
-            instrucciones.innerText = "😭 ¡La computadora ganó el juego! 😭"
-        }
-
-        elegiTuArma.classList.add("disabled");
-        reiniciar.classList.remove("disabled");
-        reiniciar.addEventListener("click", reiniciarJuego);
-    }
-
-
-}
-
-function ganaUsuario() {
-    puntosUsuario++;
-    contenedorPuntosUsuario.innerText = puntosUsuario;
-    contenedorGanaPunto.innerText = "¡Ganaste un punto! 🔥"
-}
-
-function ganaPC() {
-    puntosPC++;
-    contenedorPuntosPC.innerText = puntosPC;
-    contenedorGanaPunto.innerText = "¡La computadora ganó un punto! 😭"
-}
-
-function empate() {
-    contenedorGanaPunto.innerText = "¡Empate! 😱"
-}
-
-function reiniciarJuego() {
-    reiniciar.classList.add("disabled");
-    elegiTuArma.classList.remove("disabled");
-    mensaje.classList.add("disabled");
-
-    puntosUsuario = 0;
-    puntosPC = 0;
-    
-    contenedorPuntosUsuario.innerText = puntosUsuario;
-    contenedorPuntosPC.innerText = puntosPC;
-
-    instrucciones.innerText = "El primero en llegar a 5 puntos gana."
-}
-
+const armas = [
+    { nombre: 'piedra🪨', venceA: ['tijera✂️'] },
+    { nombre: 'papel📋', venceA: ['piedra🪨'] },
+    { nombre: 'tijera✂️', venceA: ['papel📋'] }
+];
 
 
 const botonColorMode = document.querySelector("#color-mode");
@@ -137,4 +52,111 @@ botonColorMode.addEventListener("click", () => {
     } else {
         activarDarkMode();
     }
-})
+});
+
+function iniciarTurno(e) {
+    let debugInfo = document.getElementById("debug-info");
+    debugInfo.innerHTML = ""; 
+
+    let eleccionPC = Math.floor(Math.random() * armas.length);
+    let eleccionUsuarioObj = armas.find(arma => arma.nombre === e.currentTarget.id);
+
+    
+    if (!eleccionUsuarioObj) {
+        debugInfo.innerHTML += "Arma inválida seleccionada.<br>";
+        return;
+    }
+
+    let eleccionUsuario = eleccionUsuarioObj.nombre;
+    let eleccionPCObj = armas[eleccionPC];
+
+    debugInfo.innerHTML += "Elección del usuario: " + eleccionUsuario + "<br>";
+    debugInfo.innerHTML += "Elección de la computadora: " + eleccionPCObj.nombre + "<br>";
+
+    
+    if (
+        (eleccionUsuario === "piedra🪨" && eleccionPCObj.nombre === "tijera✂️") ||
+        (eleccionUsuario === "tijera✂️" && eleccionPCObj.nombre === "papel📋") ||
+        (eleccionUsuario === "papel📋" && eleccionPCObj.nombre === "piedra🪨")
+    ) {
+        ganaUsuario(); 
+    } else if (
+        (eleccionPCObj.nombre === "piedra🪨" && eleccionUsuario === "tijera✂️") ||
+        (eleccionPCObj.nombre === "tijera✂️" && eleccionUsuario === "papel📋") ||
+        (eleccionPCObj.nombre === "papel📋" && eleccionUsuario === "piedra🪨")
+    ) {
+        ganaPC(); 
+    } else {
+        empate(); 
+    }
+
+    
+    if (puntosUsuario === 5 || puntosPC === 5) {
+        
+        detenerJuego();
+    }
+}
+
+function ganaUsuario() {
+    puntosUsuario++;
+    contenedorPuntosUsuario.innerText = puntosUsuario;
+    contenedorGanaPunto.innerText = "¡Ganaste un punto! 🔥";
+
+    const armasQueVencen = armas.filter(arma => arma.venceA.includes(contenedorEleccionPC.innerText));
+    if (armasQueVencen.length > 0) {
+        contenedorGanaPunto.innerText += `\nArmas que vencen: ${armasQueVencen.map(arma => arma.nombre).join(', ')}`;
+    }
+}
+
+function ganaPC() {
+    puntosPC++;
+    contenedorPuntosPC.innerText = puntosPC;
+    contenedorGanaPunto.innerText = "¡La computadora ganó un punto! 😭";
+
+    const armasQueVencen = armas.filter(arma => arma.venceA.includes(contenedorEleccionUsuario.innerText));
+    if (armasQueVencen.length > 0) {
+        contenedorGanaPunto.innerText += `\nArmas que vencen: ${armasQueVencen.map(arma => arma.nombre).join(', ')}`;
+    }
+}
+
+function empate() {
+    contenedorGanaPunto.innerText = "¡Empate! 😱";
+}
+
+function detenerJuego() {
+    if (puntosUsuario === 5) {
+        instrucciones.innerText = "🔥 ¡Ganaste el juego! 🔥";
+        Swal.fire("¡Felicidades!", "Has ganado el juego.");
+    } else {
+        instrucciones.innerText = "😭 ¡La computadora ganó el juego! 😭";
+        Swal.fire("¡Lo siento!", "La computadora ha ganado el juego.");
+    }
+
+   
+    botonesArmas.forEach(boton => {
+        boton.disabled = true;
+    });
+
+    
+    document.getElementById("reiniciar").classList.remove("disabled");
+}
+
+
+document.getElementById("reiniciar").addEventListener("click", reiniciarJuego);
+
+function reiniciarJuego() {
+    
+    puntosUsuario = 0;
+    puntosPC = 0;
+    contenedorPuntosUsuario.innerText = puntosUsuario;
+    contenedorPuntosPC.innerText = puntosPC;
+    instrucciones.innerText = "El primero en llegar a 5 puntos gana.";
+
+    
+    botonesArmas.forEach(boton => {
+        boton.disabled = false;
+    });
+
+    
+    document.getElementById("reiniciar").classList.add("disabled");
+}
