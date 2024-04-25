@@ -10,7 +10,7 @@
 }
 
 body{
-    background-color:rgb(147, 194, 186);
+    background-color:rgb(44, 117, 105);
     color: rgb(0, 0, 0);
 }
 
@@ -19,9 +19,9 @@ header{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 1rem;
-    background-color:rgb(255, 255, 255) ;
-    color: rgb(0, 0, 53);
+    padding: 1rem; 
+    background-color:rgb(99, 90, 68);
+    color:  rgb(255, 255, 255);
     
 }
 
@@ -74,6 +74,7 @@ main{
 }
 
 .elegi-tu-arma{
+    margin-top: 2rem;
     margin-bottom: 2rem;
 }
 
@@ -85,6 +86,7 @@ main{
 
 
 .armas{
+    margin-top: 2rem;
     display: flex;
     justify-content: center;
     gap: 1rem ;
